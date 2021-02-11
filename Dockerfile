@@ -9,6 +9,7 @@ RUN apk add --no-cache shadow openssl \
             freetype-dev \
             libjpeg-turbo-dev \
             libpng-dev
+
 RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include --with-png-dir=/usr/include/
 RUN docker-php-ext-install -j$(nproc) gd
@@ -21,13 +22,14 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 WORKDIR /var/www
+RUN rm -rf /var/www/html && ln -s public html
 
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN usermod -u 1000 www-data
 
-RUN rm -rf /var/www/html && ln -s public html
-
 USER www-data
 
 EXPOSE 9000
+
+ENTRYPOINT ["php-fpm"]
