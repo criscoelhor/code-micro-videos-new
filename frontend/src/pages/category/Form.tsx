@@ -1,7 +1,10 @@
-import { TextField, Checkbox, Box, Button, ButtonProps, makeStyles, Theme} from '@material-ui/core';
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
+import { TextField, Checkbox, Box, Button, makeStyles, Theme} from '@material-ui/core';
+import {ButtonProps} from "@material-ui/core/Button";
+import useForm from "react-hook-form";
 import categoryhttp from '../../util/http/category-http';
+import * as yup from '../../util/vendor/yup';
+import { ErrorSharp } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme:Theme)=>{
     return {
@@ -11,16 +14,25 @@ const useStyles = makeStyles((theme:Theme)=>{
     }
 });
 
+const validationSchema = yup.object().shape({
+    name: yup.string()
+        .label('Nome')
+        .required()
+        .max(255)
+});
+
 export const Form = () => {
 
     const classes = useStyles();
 
     const buttonProps: ButtonProps = {
         className: classes.submit,
-        variant: "outlined",        
+        color: 'secondary',
+        variant: "contained",        
     };
 
-    const {register, handleSubmit, getValues} = useForm({
+    const {register, handleSubmit, getValues, errors} = useForm({
+        validationSchema,
         defaultValues: {
             is_active: true
         }
@@ -39,6 +51,8 @@ export const Form = () => {
                 fullWidth
                 variant={"outlined"}
                 inputRef={register}
+                error={errors.name !== undefined}
+                helperText={errors.name && errors.name.message}
             />
             <TextField                
                 name="description"
@@ -57,7 +71,13 @@ export const Form = () => {
             />
             Ativo?
             <Box dir={"rtl"}>
-                <Button {...buttonProps} onClick={() => onSubmit(getValues(), null)}>Salvar</Button>
+                <Button 
+                    color={"primary"}
+                    {...buttonProps} 
+                    onClick={() => onSubmit(getValues(), null)}
+                >
+                    Salvar
+                </Button>
                 <Button {...buttonProps} type="submit">Salvar e continuar editando</Button>           
             </Box>
         </form>

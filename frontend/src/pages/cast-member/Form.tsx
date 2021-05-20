@@ -18,7 +18,8 @@ export const Form = () => {
 
     const buttonProps: ButtonProps = {
         className: classes._submit, 
-        variant: "outlined"
+        color: 'secondary',
+        variant: "contained"
     }
     
     const {register, handleSubmit, getValues, setValue} = useForm();
@@ -39,7 +40,7 @@ export const Form = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
                 name = "name"
-                label = "nome"
+                label = "Nome"
                 fullWidth
                 variant={"outlined"}
                 inputRef={register}
